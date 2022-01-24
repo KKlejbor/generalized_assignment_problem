@@ -33,6 +33,22 @@ public class GeneralizedAssignmentProblemSolution implements Solution {
 			capacities = new int[numberOfKnapsacks];
 			assignments = new int[numberOfKnapsacks][numberOfItems];
 
+			for (int i = 0; i < numberOfKnapsacks; i++) {
+				for (int j = 0; j < numberOfItems; j++) {
+					profits[i][j] = Integer.parseInt(scanner.next());
+				}
+			}
+
+			for (int i = 0; i < numberOfKnapsacks; i++) {
+				for (int j = 0; j < numberOfItems; j++) {
+					weights[i][j] = Integer.parseInt(scanner.next());
+				}
+			}
+
+			for (int i = 0; i < numberOfKnapsacks; i++) {
+				capacities[i] = Integer.parseInt(scanner.next());
+			}
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -45,7 +61,6 @@ public class GeneralizedAssignmentProblemSolution implements Solution {
 			this.assignments = assignments;
 			this.value = value;
 		}
-
 	}
 
 	@Override

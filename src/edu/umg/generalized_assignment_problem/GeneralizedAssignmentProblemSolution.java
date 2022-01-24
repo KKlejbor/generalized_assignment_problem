@@ -4,13 +4,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-public class GeneralizedAssignmentProblemSolution implements Solution{
+public class GeneralizedAssignmentProblemSolution implements Solution {
 	private final int numberOfItems;
 	private final int numberOfKnapsacks;
 	private final int[][] profits;
 	private final int[][] weights;
 	private final int[] capacities;
 	private final int[][] assignments;
+	private final double value;
 
 	public GeneralizedAssignmentProblemSolution(String fileName) {
 		int numberOfItems = 0;
@@ -19,6 +20,7 @@ public class GeneralizedAssignmentProblemSolution implements Solution{
 		int[][] weights = null;
 		int[] capacities = null;
 		int[][] assignments = null;
+		double value = 0;
 
 		try (Scanner scanner = new Scanner(new File(fileName))) {
 			scanner.next();
@@ -33,20 +35,22 @@ public class GeneralizedAssignmentProblemSolution implements Solution{
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		}finally {
+			System.exit(1);
+		} finally {
 			this.numberOfItems = numberOfItems;
 			this.numberOfKnapsacks = numberOfKnapsacks;
 			this.profits = profits;
 			this.weights = weights;
 			this.capacities = capacities;
 			this.assignments = assignments;
+			this.value = value;
 		}
 
 	}
 
 	@Override
 	public double getValue() {
-		return 0;
+		return value;
 	}
 
 	@Override

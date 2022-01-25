@@ -51,7 +51,7 @@ public class GeneralizedAssignmentProblemSolution implements Solution {
 				capacities[i] = Integer.parseInt(scanner.next());
 			}
 
-			assignments = generateRandomAssignmentsMatrix();
+			assignments = generateRandomAssignmentsMatrix(numberOfKnapsacks, numberOfItems, weights, capacities);
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -67,34 +67,23 @@ public class GeneralizedAssignmentProblemSolution implements Solution {
 		}
 	}
 
-	private int[][] generateRandomAssignmentsMatrix() {
-		int numberOfKnapsacksUsed = 1;
+	private int[][] generateRandomAssignmentsMatrix(int numberOfKnapsacks, int numberOfItems, int[][] weights, int[] capacities) {
 		int[][] assignments = new int[numberOfKnapsacks][numberOfItems];
 		int[] bagUsage = new int[numberOfKnapsacks];
 
 		for (int i = 0; i < numberOfItems; i++) {
 			int minIndex = -1;
-			int minUsage = Integer.MAX_VALUE;
+			int minWeight = Integer.MAX_VALUE;
 
-			for (int j = 0; j < numberOfKnapsacksUsed; j++) {
-
-				if (bagUsage[j] + weights[j][i] <= capacities[j]) {
-					if (bagUsage[j] < minUsage) {
-						minUsage = bagUsage[j];
-						minIndex = j;
-					}
+			for (int j = 0; j < numberOfKnapsacks; j++) {
+				if(weights[j][i] < minWeight && bagUsage[j] + weights[j][i] <= capacities[j]){
+					minIndex = j;
+					minWeight = weights[j][i];
 				}
-
 			}
 
-			if (minIndex != -1) {
-				assignments[minIndex][i] = 1;
-				bagUsage[minIndex] += weights[minIndex][i];
-			} else {
-				numberOfKnapsacksUsed++;
-				assignments[numberOfKnapsacksUsed - 1][i] = 1;
-				bagUsage[numberOfKnapsacksUsed - 1] += weights[numberOfKnapsacksUsed - 1][i];
-			}
+			assignments[minIndex][i] = 1;
+			bagUsage[minIndex] += minWeight;
 		}
 
 		return assignments;
@@ -213,6 +202,40 @@ public class GeneralizedAssignmentProblemSolution implements Solution {
 //
 //		return assignments;
 //	}
+
+	public void printSolution(){
+		System.out.printf("Number of Knapsacks: %d\n", numberOfKnapsacks);
+		System.out.printf("Number of Items: %d\n", numberOfItems);
+		System.out.println("Profits: ");
+		for (int i = 0; i < numberOfKnapsacks; i++) {
+			for (int j = 0; j < numberOfItems; j++) {
+				System.out.printf("%2d ",profits[i][j]);
+			}
+			System.out.println();
+		}
+
+		System.out.println("Weights: ");
+		for (int i = 0; i < numberOfKnapsacks; i++) {
+			for (int j = 0; j < numberOfItems; j++) {
+				System.out.printf("%2d ",weights[i][j]);
+			}
+			System.out.println();
+		}
+
+		System.out.println("Capacities: ");
+		for (int i = 0; i < numberOfKnapsacks; i++) {
+			System.out.printf("%2d ",capacities[i]);
+		}
+		System.out.println();
+
+		System.out.println("Assignments:");
+		for (int i = 0; i < numberOfKnapsacks; i++) {
+			for (int j = 0; j < numberOfItems; j++) {
+				System.out.printf("%2d ",assignments[i][j]);
+			}
+			System.out.println();
+		}
+	}
 
 	@Override
 	public double getValue() {

@@ -2,10 +2,8 @@ package edu.umg.generalized_assignment_problem;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class GeneralizedAssignmentProblemSolution implements Solution {
 	private final int numberOfItems;
@@ -52,6 +50,7 @@ public class GeneralizedAssignmentProblemSolution implements Solution {
 			}
 
 			assignments = generateRandomAssignmentsMatrix(numberOfKnapsacks, numberOfItems, weights, capacities);
+			value = computeValue(numberOfItems, numberOfKnapsacks, profits, assignments);
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -143,7 +142,7 @@ public class GeneralizedAssignmentProblemSolution implements Solution {
 		this.value = oldSolution.value;
 	}
 
-	private double computeValue() {
+	private double computeValue(int numberOfItems, int numberOfKnapsacks, int[][] profits, int[][] assignments){
 		if (numberOfItems == 0) {
 			return 0;
 		}
@@ -160,6 +159,10 @@ public class GeneralizedAssignmentProblemSolution implements Solution {
 		}
 
 		return value;
+	}
+
+	private double computeValue() {
+		return computeValue(this.numberOfItems, this.numberOfKnapsacks, this.profits, this.assignments);
 	}
 
 
@@ -206,32 +209,33 @@ public class GeneralizedAssignmentProblemSolution implements Solution {
 	public void printSolution(){
 		System.out.printf("Number of Knapsacks: %d\n", numberOfKnapsacks);
 		System.out.printf("Number of Items: %d\n", numberOfItems);
+		System.out.println();
+
 		System.out.println("Profits: ");
-		for (int i = 0; i < numberOfKnapsacks; i++) {
-			for (int j = 0; j < numberOfItems; j++) {
-				System.out.printf("%2d ",profits[i][j]);
-			}
-			System.out.println();
-		}
+		printMatrix(profits);
+		System.out.println();
 
 		System.out.println("Weights: ");
-		for (int i = 0; i < numberOfKnapsacks; i++) {
-			for (int j = 0; j < numberOfItems; j++) {
-				System.out.printf("%2d ",weights[i][j]);
-			}
-			System.out.println();
-		}
+		printMatrix(weights);
+		System.out.println();
 
 		System.out.println("Capacities: ");
 		for (int i = 0; i < numberOfKnapsacks; i++) {
 			System.out.printf("%2d ",capacities[i]);
 		}
 		System.out.println();
+		System.out.println();
 
 		System.out.println("Assignments:");
+		printMatrix(assignments);
+		System.out.println();
+		System.out.printf("Value: %f\n", value);
+	}
+
+	private void printMatrix(int[][] matrix) {
 		for (int i = 0; i < numberOfKnapsacks; i++) {
 			for (int j = 0; j < numberOfItems; j++) {
-				System.out.printf("%2d ",assignments[i][j]);
+				System.out.printf("%2d ", matrix[i][j]);
 			}
 			System.out.println();
 		}

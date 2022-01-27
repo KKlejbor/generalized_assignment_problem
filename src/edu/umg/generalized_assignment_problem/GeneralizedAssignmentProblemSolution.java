@@ -49,7 +49,7 @@ public class GeneralizedAssignmentProblemSolution implements Solution {
 				capacities[i] = Integer.parseInt(scanner.next());
 			}
 
-			assignments = generateRandomAssignmentsMatrix(numberOfKnapsacks, numberOfItems, weights, capacities);
+			assignments = generateInitialAssignmentsMatrix(numberOfKnapsacks, numberOfItems, weights, capacities);
 			value = computeValue(numberOfItems, numberOfKnapsacks, profits, assignments);
 
 		} catch (FileNotFoundException e) {
@@ -66,7 +66,7 @@ public class GeneralizedAssignmentProblemSolution implements Solution {
 		}
 	}
 
-	private int[][] generateRandomAssignmentsMatrix(int numberOfKnapsacks, int numberOfItems, int[][] weights, int[] capacities) {
+	private int[][] generateInitialAssignmentsMatrix(int numberOfKnapsacks, int numberOfItems, int[][] weights, int[] capacities) {
 		int[][] assignments = new int[numberOfKnapsacks][numberOfItems];
 		int[] bagUsage = new int[numberOfKnapsacks];
 

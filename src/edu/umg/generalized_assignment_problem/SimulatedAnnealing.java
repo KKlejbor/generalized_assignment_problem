@@ -42,7 +42,7 @@ public class SimulatedAnnealing {
 			for (int j = 0; j < this.numberOfInnerIterations; j++) {
 				Solution newSolution = currentSolution.findSolutionFromNeighbourhood();
 
-				if (currentSolution.getValue() > newSolution.getValue()) {
+				if (currentSolution.getValue() < newSolution.getValue()) {
 					currentSolution = newSolution;
 				} else if (ThreadLocalRandom.current().nextDouble(1) < Math.exp((currentSolution.getValue() - newSolution.getValue()) / this.temperature)) {
 					currentSolution = newSolution;

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class GeneralizedAssignmentProblemSolution implements Solution {
 	private final int numberOfItems;
@@ -133,13 +134,9 @@ public class GeneralizedAssignmentProblemSolution implements Solution {
 
 		this.capacities = Arrays.copyOf(oldSolution.capacities, numberOfKnapsacks);
 
-		this.assignments = new int[numberOfKnapsacks][];
+		this.assignments = findAssignmentsMatrixFromNeighbourhood(oldSolution);
 
-		for (int i = 0; i < numberOfKnapsacks; i++) {
-			this.assignments[i] = Arrays.copyOf(oldSolution.assignments[i], numberOfItems);
-		}
-
-		this.value = oldSolution.value;
+		this.value = computeValue();
 	}
 
 	private double computeValue(int numberOfItems, int numberOfKnapsacks, int[][] profits, int[][] assignments){
@@ -166,45 +163,60 @@ public class GeneralizedAssignmentProblemSolution implements Solution {
 	}
 
 
-//	private int[][] findAssignmentsMatrixFromNeighbourhood() {
-//		int[][] assignments = new int[size][];
-//
-//		for (int i = 0; i < size; i++) {
-//			assignments[i] = Arrays.copyOf(this.assignments[i], size);
-//		}
-//
-//		//Random random = new Random();
-//		int job1 = ThreadLocalRandom.current().nextInt(size);
-//		int job2;
-//
-//		do {
-//			job2 = ThreadLocalRandom.current().nextInt(size);
-//		} while (job1 == job2);
-//
-//		int worker1 = 0;
-//		int worker2 = 0;
-//
-//		for (int i = 0; i < assignments.length; i++) {
-//			if (assignments[i][job1] == 1) {
-//				worker1 = i;
-//				break;
-//			}
-//		}
-//
-//		for (int i = 0; i < assignments.length; i++) {
-//			if (assignments[i][job2] == 1) {
-//				worker2 = i;
-//				break;
-//			}
-//		}
-//
-//		assignments[worker1][job1] = 0;
-//		assignments[worker2][job2] = 0;
-//		assignments[worker1][job2] = 1;
-//		assignments[worker2][job1] = 1;
-//
-//		return assignments;
-//	}
+	private int[][] findAssignmentsMatrixFromNeighbourhood(GeneralizedAssignmentProblemSolution oldSolution) {
+		int[][] assignments = new int[oldSolution.numberOfKnapsacks][];
+		boolean retry;
+
+		for (int i = 0; i < oldSolution.numberOfKnapsacks; i++) {
+			assignments[i] = Arrays.copyOf(oldSolution.assignments[i], oldSolution.numberOfItems);
+		}
+
+		do {
+			int item1 = ThreadLocalRandom.current().nextInt(oldSolution.numberOfItems);
+			int item2;
+
+			do {
+				item2 = ThreadLocalRandom.current().nextInt(oldSolution.numberOfItems);
+			} while (item1 == item2);
+
+			int knapsack1 = 0;
+			int knapsack2 = 0;
+
+			for (int i = 0; i < oldSolution.numberOfKnapsacks; i++) {
+				if (assignments[i][item1] == 1) {
+					knapsack1 = i;
+				}
+			}
+
+			for (int i = 0; i < oldSolution.numberOfKnapsacks; i++) {
+				if (assignments[i][item2] == 1) {
+					knapsack2 = i;
+					break;
+				}
+			}
+
+			int bagUsage1 = Arrays.stream(assignments[knapsack1]).sum();
+			int bagUsage2 = Arrays.stream(assignments[knapsack2]).sum();
+
+			assignments[knapsack1][item1] = 0;
+			assignments[knapsack2][item2] = 0;
+			assignments[knapsack1][item2] = 1;
+			assignments[knapsack2][item1] = 1;
+
+			retry = false;
+
+			if (bagUsage1 > oldSolution.capacities[knapsack1] || bagUsage2 > oldSolution.capacities[knapsack2]) {
+				assignments[knapsack1][item2] = 0;
+				assignments[knapsack2][item1] = 0;
+				assignments[knapsack1][item1] = 1;
+				assignments[knapsack2][item2] = 1;
+
+				retry = true;
+			}
+		}while (retry);
+
+		return assignments;
+	}
 
 	public void printSolution(){
 		System.out.printf("Number of Knapsacks: %d\n", numberOfKnapsacks);
@@ -248,11 +260,11 @@ public class GeneralizedAssignmentProblemSolution implements Solution {
 
 	@Override
 	public Solution findSolutionFromNeighbourhood() {
-		return null;
+		return new GeneralizedAssignmentProblemSolution(this);
 	}
 
 	@Override
 	public Solution newInstance() {
-		return null;
+		return new GeneralizedAssignmentProblemSolution(numberOfItems, numberOfKnapsacks, profits, weights, capacities, assignments, value);
 	}
 }
